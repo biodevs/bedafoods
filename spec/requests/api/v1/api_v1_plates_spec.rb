@@ -71,10 +71,14 @@ RSpec.describe "Api::V1::Plates", type: :request do
 
       it "plate are created with correct data" do
         @plate_attributes.each do |field|
-          expect(plate.first[field.first]).to eql(field.last)
+          expect(Plate.first[field.first].to_json).to eql(field.last.to_json)
         end
       end
 
+      it 'plate are associated with correct restaurant' do
+        expect(@restaurant).to eql(Plate.last.restaurant)
+      end      
+      
       it "Returned data is correct" do
         @plate_attributes.each do |field|
           expect(json[field.first.to_s]).to eql(field.last)
@@ -113,7 +117,7 @@ RSpec.describe "Api::V1::Plates", type: :request do
       it "plate are updated with correct data" do
         @plate.reload
         @plate_attributes.each do |field|
-          expect(@plate[field.first]).to eql(field.last)
+          expect(@plate[field.first.to_s].to_json).to eql(field.last.to_json)
         end
       end
 
@@ -151,9 +155,9 @@ RSpec.describe "Api::V1::Plates", type: :request do
       it "returns 200" do
         expect_status(200)
       end
-
+      
       it "plate are deleted" do
-        expect(plate.all.count).to eql(0)
+        expect(Plate.all.count).to eql(0)
       end
     end
 

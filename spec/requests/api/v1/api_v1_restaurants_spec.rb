@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Restaurants", type: :request do
+  
   ########## INDEX ##########
   describe "GET /restaurants" do
 
@@ -46,8 +47,8 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
       end
       
       it 'returned associated plates' do
-        expect(json['plates'].first).to eql(@plate1.to_json)
-        expect(json['plates'].last).to eql(@plate2.to_json)
+        expect(json["plates"].first.to_json).to eql(@plate1.to_json)
+        expect(json["plates"].last.to_json).to eql(@plate2.to_json)
       end
     end
 
@@ -73,8 +74,9 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
       end
 
       it "restaurant are created with correct data" do
+        byebug
         @restaurant_attributes.each do |field|
-          expect(restaurant.first[field.first]).to eql(field.last)
+          expect(Restaurant.first[field.first.to_sym]).to eql(field.last)
         end
       end
 
@@ -144,8 +146,10 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
 
     context "When restaurant exists" do
 
-      before do
+      before :each do
         @restaurant = create(:restaurant)
+        @plate1 = create(:plate, restaurant: @restaurant)
+        @plate2 = create(:plate, restaurant: @restaurant)        
         delete "/api/v1/restaurants/#{@restaurant.friendly_id}", params: {}
       end
 
@@ -154,10 +158,10 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
       end
 
       it "restaurant are deleted" do
-        expect(restaurant.all.count).to eql(0)
+        expect(Restaurant.all.size).to eql(0)
       end
       it "associated plate are deleted" do
-        expect(Plate.all.count).to eql(0)
+        expect(@restaurant.plates.size).to eql(0)
       end      
     end
 
@@ -168,7 +172,4 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
       end
     end
   end  
-  
-  
-  
 end
