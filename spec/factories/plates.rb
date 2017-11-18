@@ -1,8 +1,8 @@
 FactoryGirl.define do
   factory :plate do
-    restaurant nil
-    price "9.99"
-    name "MyString"
-    description "MyText"
+    restaurant
+    price FFaker.numerify('##########.##')
+    name {FFaker::Lorem.word}
+    description {FFaker::Lorem.phrase}
   end
 end

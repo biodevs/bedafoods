@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :restaurant do
-    name "MyString"
-    description "MyText"
+    name {FFaker::Lorem.word}
+    description {FFaker::Lorem.phrase}
   end
 end
