@@ -32,16 +32,22 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
     context "When restaurant exists" do
       before do
         @restaurant = create(:restaurant)
+        @plate1 = create(:plate, restaurant: @restaurant)
+        @plate2 = create(:plate, restaurant: @restaurant)        
+        get "/api/v1/restaurants/#{@restaurant.friendly_id}", params: {}
       end
 
       it "returns 200" do
-        get "/api/v1/restaurants/#{@restaurant.friendly_id}", params: {}
         expect_status(200)
       end
 
       it "returned restaurant with right datas" do
-        get "/api/v1/restaurants/#{@restaurant.friendly_id}", params: {}
-        expect(json).to eql(JSON.parse(@restaurant.to_json))
+        expect(json.except('plates')).to eql(JSON.parse(@restaurant.to_json))
+      end
+      
+      it 'returned associated plates' do
+        expect(json['plates'].first).to eql(@plate1.to_json)
+        expect(json['plates'].last).to eql(@plate2.to_json)
       end
     end
 
@@ -150,6 +156,9 @@ RSpec.describe "Api::V1::Restaurants", type: :request do
       it "restaurant are deleted" do
         expect(restaurant.all.count).to eql(0)
       end
+      it "associated plate are deleted" do
+        expect(Plate.all.count).to eql(0)
+      end      
     end
 
     context "When restaurant dont exists" do
